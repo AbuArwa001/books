@@ -1,6 +1,6 @@
 # from pydantic import BaseModel, 
 from sqlmodel import SQLModel,Field, Column
-from datetime import datetime
+from datetime import date, datetime
 from uuid import uuid4, UUID as uuid
 import sqlalchemy.dialects.postgresql as pg
 
@@ -19,7 +19,7 @@ class Book(SQLModel, table=True):
         title: str
         author: str
         publisher: str
-        published_date: str
+        published_date: date
         page_count: int
         language: str
         created_at: datetime = Field(default_factory=datetime.utcnow)
