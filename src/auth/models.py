@@ -30,6 +30,13 @@ class User(SQLModel, table=True):
     first_name: str
     last_name: str
     is_verified: bool = Field(default=False)
+    password_hash: str= Field(
+        exclude=True,
+        sa_column=Column(
+            pg.VARCHAR,
+            nullable=False,
+        )
+    )
     created_at: datetime = Field(
         default_factory=datetime.now,
         sa_column=Column(
