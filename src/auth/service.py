@@ -29,3 +29,4 @@ class UserService:
         await self.session.commit()
         await self.session.refresh(new_user)
         return new_user
+    

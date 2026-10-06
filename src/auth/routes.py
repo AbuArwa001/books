@@ -4,7 +4,7 @@ from .schemas import UserCreate, UserRegisterResponse, UserResponse, UserLoginMo
 from .service import UserService
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.db.main import get_session
-from .utils import create_access_token, decode_access_token
+from .utils import create_access_token, decode_access_token, verify_password
 from fastapi.responses import JSONResponse
 from datetime import timedelta
 
@@ -30,12 +30,12 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
     return {"message": "User registered successfully", "user": new_user}
 
 @auth_router.post("/login")
-async def login(user_data: UserLoginModel):
+async def login(user_data: UserLoginModel, session: AsyncSession = Depends(get_session)):
     email = user_data.email
     password = user_data.password
-    uservice_service = UserService(session=Depends(get_session))
+    uservice_service = UserService(session)
     user = await uservice_service.get_user_by_email(email)
-    if not user or not uservice_service.verify_password(password, user.password_hash):
+    if not user or not verify_password(password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
