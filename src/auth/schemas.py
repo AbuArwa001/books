@@ -25,3 +25,7 @@ class UserResponse(BaseModel):
 class UserRegisterResponse(BaseModel):
     message: str
     user: UserResponse
+
+class UserLoginModel(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=6, max_length=20)
