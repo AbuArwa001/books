@@ -22,7 +22,11 @@ class User(SQLModel, table=True):
     __tablename__ = "users"
     uid: uuid = Field(
         sa_column=Column(
-            pg.UUID, nullable=False, primary_key=True, index=True, default=uuid4
+            pg.UUID,
+            nullable=False,
+            primary_key=True,
+            index=True,
+            default=uuid4,
         )
     )
     username: str

@@ -10,7 +10,10 @@ class AccessTokenBearer(HTTPBearer):
         super().__init__(auto_error=auto_error)
 
     async def __call__(
-        self, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
+        self,
+        credentials: HTTPAuthorizationCredentials = Depends(
+            HTTPBearer()
+        ),
     ):
         if credentials:
             token = credentials.credentials

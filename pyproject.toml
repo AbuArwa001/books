@@ -1,6 +1,6 @@
 [tool.ruff]
 # Set the maximum line length (e.g., 88 is default Black style, 100 or 120 are common alternatives)
-line-length = 88
+line-length = 70
 
 # Target Python version
 target-version = "py312"

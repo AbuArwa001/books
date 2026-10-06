@@ -17,9 +17,14 @@ REFRESH_TOKEN_EXPIRE_DAYS = 2
 
 
 @auth_router.post(
-    "/signup", response_model=UserRegisterResponse, status_code=status.HTTP_201_CREATED
+    "/signup",
+    response_model=UserRegisterResponse,
+    status_code=status.HTTP_201_CREATED,
 )
-async def register(user_data: UserCreate, session: AsyncSession = Depends(get_session)):
+async def register(
+    user_data: UserCreate,
+    session: AsyncSession = Depends(get_session),
+):
     user_service = UserService(session=session)
 
     # 1. Check if user exists and raise HTTPException directly
@@ -31,12 +36,16 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
 
     # 2. Create user and return success dictionary matching UserRegisterResponse schema
     new_user = await user_service.create_user(user_data)
-    return {"message": "User registered successfully", "user": new_user}
+    return {
+        "message": "User registered successfully",
+        "user": new_user,
+    }
 
 
 @auth_router.post("/login")
 async def login(
-    user_data: UserLoginModel, session: AsyncSession = Depends(get_session)
+    user_data: UserLoginModel,
+    session: AsyncSession = Depends(get_session),
 ):
     email = user_data.email
     password = user_data.password
@@ -47,7 +56,9 @@ async def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
-    access_token = create_access_token(data={"email": email, "user_id": str(user.uid)})
+    access_token = create_access_token(
+        data={"email": email, "user_id": str(user.uid)}
+    )
     refresh_token = create_access_token(
         data={"email": email, "user_id": str(user.uid)},
         expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),

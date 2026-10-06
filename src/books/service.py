@@ -26,7 +26,9 @@ class BookService:
             return None
         return book
 
-    async def update_book(self, book_id: str, book_data: BookUpdateModel):
+    async def update_book(
+        self, book_id: str, book_data: BookUpdateModel
+    ):
         book = await self.get_book(book_id)
         if not book:
             return None

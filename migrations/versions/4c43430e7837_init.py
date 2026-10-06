@@ -26,16 +26,42 @@ def upgrade() -> None:
     op.create_table(
         "users",
         sa.Column("uid", sa.UUID(), nullable=False),
-        sa.Column("username", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column("email", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column("first_name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column("last_name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column(
+            "username",
+            sqlmodel.sql.sqltypes.AutoString(),
+            nullable=False,
+        ),
+        sa.Column(
+            "email",
+            sqlmodel.sql.sqltypes.AutoString(),
+            nullable=False,
+        ),
+        sa.Column(
+            "first_name",
+            sqlmodel.sql.sqltypes.AutoString(),
+            nullable=False,
+        ),
+        sa.Column(
+            "last_name",
+            sqlmodel.sql.sqltypes.AutoString(),
+            nullable=False,
+        ),
         sa.Column("is_verified", sa.Boolean(), nullable=False),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=False),
-        sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column(
+            "created_at",
+            postgresql.TIMESTAMP(timezone=True),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            postgresql.TIMESTAMP(timezone=True),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint("uid"),
     )
-    op.create_index(op.f("ix_users_uid"), "users", ["uid"], unique=False)
+    op.create_index(
+        op.f("ix_users_uid"), "users", ["uid"], unique=False
+    )
     op.alter_column(
         "books",
         "published_date",
@@ -44,7 +70,9 @@ def upgrade() -> None:
         existing_nullable=False,
         postgresql_using="published_date::date",
     )
-    op.create_index(op.f("ix_books_uid"), "books", ["uid"], unique=False)
+    op.create_index(
+        op.f("ix_books_uid"), "books", ["uid"], unique=False
+    )
     # ### end Alembic commands ###
 
 

@@ -32,7 +32,8 @@ def create_access_token(
     payload["exp"] = (
         datetime.now() + expires_delta
         if expires_delta
-        else datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        else datetime.now()
+        + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     payload["jti"] = str(uuid.uuid4())
     payload["refresh"] = refresh
@@ -40,7 +41,9 @@ def create_access_token(
     # payload["exp"] = datetime.utcnow() + expires_delta
 
     token = jwt.encode(
-        payload=payload, key=Config.JWT_SECRET_KEY, algorithm=Config.JWT_ALGORITHM
+        payload=payload,
+        key=Config.JWT_SECRET_KEY,
+        algorithm=Config.JWT_ALGORITHM,
     )
     return token
 
@@ -52,7 +55,9 @@ def decode_access_token(token: str) -> dict:
     try:
         print("Decoding token:", token)
         payload = jwt.decode(
-            jwt=token, key=Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM]
+            jwt=token,
+            key=Config.JWT_SECRET_KEY,
+            algorithms=[Config.JWT_ALGORITHM],
         )
         print("Decoded payload:", payload)
         return payload
