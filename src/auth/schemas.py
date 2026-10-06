@@ -11,7 +11,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=6, max_length=20)
 
 
-class UserResponse(BaseModel): 
+class UserResponse(BaseModel):
     username: str
     email: EmailStr
     first_name: str
@@ -22,9 +22,11 @@ class UserResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class UserRegisterResponse(BaseModel):
     message: str
     user: UserResponse
+
 
 class UserLoginModel(BaseModel):
     email: EmailStr

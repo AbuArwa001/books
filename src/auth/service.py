@@ -5,7 +5,6 @@ from .schemas import UserCreate, UserResponse
 from .utils import generate_password_hash
 
 
-
 class UserService:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -15,6 +14,7 @@ class UserService:
         result = await self.session.exec(statement)
         user = result.first()
         return user
+
     async def user_exists(self, email: str) -> bool:
         user = await self.get_user_by_email(email)
         return True if user else False
@@ -29,4 +29,3 @@ class UserService:
         await self.session.commit()
         await self.session.refresh(new_user)
         return new_user
-    

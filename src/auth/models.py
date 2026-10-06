@@ -14,15 +14,13 @@ class User:
     created_at:datetime
     updated_at:datetime
 """
+
+
 class User(SQLModel, table=True):
     __tablename__ = "users"
     uid: uuid = Field(
         sa_column=Column(
-            pg.UUID,
-            nullable=False,
-            primary_key=True,
-            index=True,
-            default=uuid4
+            pg.UUID, nullable=False, primary_key=True, index=True, default=uuid4
         )
     )
     username: str
@@ -30,27 +28,29 @@ class User(SQLModel, table=True):
     first_name: str
     last_name: str
     is_verified: bool = Field(default=False)
-    password_hash: str= Field(
+    password_hash: str = Field(
         exclude=True,
         sa_column=Column(
             pg.VARCHAR,
             nullable=False,
-        )
+        ),
     )
     created_at: datetime = Field(
         default_factory=datetime.now,
         sa_column=Column(
             pg.TIMESTAMP(timezone=True),
             nullable=False,
-        )
+        ),
     )
     updated_at: datetime = Field(
         default_factory=datetime.now,
         sa_column=Column(
             pg.TIMESTAMP(timezone=True),
             nullable=False,
-        )
+        ),
     )
+
+
 def __repr__(self):
     return f"User(username={self.username}, \
         email={self.email}, \

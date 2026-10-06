@@ -1,7 +1,8 @@
 from src.books.models import Book
-from sqlmodel import select,desc
+from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .schemas import BookCreateModel, BookUpdateModel
+
 
 class BookService:
     def __init__(self, db_session: AsyncSession):
@@ -15,14 +16,15 @@ class BookService:
         await self.db_session.refresh(new_book)
         return new_book
 
-    async def get_book(self, book_id:str):
+    async def get_book(self, book_id: str):
         statement = select(Book).where(Book.uid == book_id)
         result = await self.db_session.exec(statement)
         book = result.first()
         if not book:
             return None
         return book
-    async def update_book(self, book_id:str, book_data:BookUpdateModel):
+
+    async def update_book(self, book_id: str, book_data: BookUpdateModel):
         book = await self.get_book(book_id)
         if not book:
             return None
@@ -32,7 +34,8 @@ class BookService:
         await self.db_session.commit()
         await self.db_session.refresh(book)
         return book
-    async def delete_book(self, book_id:str):
+
+    async def delete_book(self, book_id: str):
         book = await self.get_book(book_id)
         if not book:
             return None
