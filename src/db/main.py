@@ -1,7 +1,8 @@
 from sqlmodel import create_engine, text, SQLModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 from src.config import Config
-from sqlmodel.ext.asyncio import AsyncSession
+from sqlmodel.ext.asyncio.session import AsyncSession
+
 from sqlalchemy.orm import sessionmaker
 
 engine = AsyncEngine(

@@ -1,13 +1,13 @@
 import uuid
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date, datetime
 
 class Book(BaseModel):
-        uid: uuid
+        uid: uuid.UUID
         title: str
         author: str
         publisher: str
-        published_date: str
+        published_date: date
         page_count: int
         language: str
         created_at: datetime
