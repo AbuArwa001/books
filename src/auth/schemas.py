@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserCreate(BaseModel):
@@ -9,8 +9,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=6, max_length=20)
 
 
-class UserResponse(BaseModel):
-    uid: str
+class UserResponse(BaseModel): 
     username: str
     email: EmailStr
     first_name: str
@@ -18,3 +17,9 @@ class UserResponse(BaseModel):
     is_verified: bool
     created_at: str
     updated_at: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class UserRegisterResponse(BaseModel):
+    message: str
+    user: UserResponse
