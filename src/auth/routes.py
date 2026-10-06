@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from .schemas import UserCreate, UserRegisterResponse, UserResponse, UserLoginModel
 from .service import UserService
@@ -33,8 +34,8 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
 async def login(user_data: UserLoginModel, session: AsyncSession = Depends(get_session)):
     email = user_data.email
     password = user_data.password
-    uservice_service = UserService(session)
-    user = await uservice_service.get_user_by_email(email)
+    user_service = UserService(session)
+    user = await user_service.get_user_by_email(email)
     if not user or not verify_password(password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -52,7 +53,7 @@ async def login(user_data: UserLoginModel, session: AsyncSession = Depends(get_s
         refresh=True)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={
+        content=jsonable_encoder({
             "message": "Login successful",
             "access_token": access_token,
             "refresh_token": refresh_token,
@@ -67,7 +68,7 @@ async def login(user_data: UserLoginModel, session: AsyncSession = Depends(get_s
                 "updated_at": user.updated_at,
                 "uid": str(user.uid)
             }
-        }
+        })
     )
 @auth_router.post("/logout")
 async def logout():
