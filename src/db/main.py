@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, text
+from sqlmodel import create_engine, text, SQLModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 from src.config import Config
 
@@ -10,13 +10,8 @@ engine = AsyncEngine(
 
 async def init_db():
     async with engine.begin() as conn:
-        statement = text("SELECT 'hello';")
+        from  src.books.models import Book
+        await conn.run_sync(SQLModel.metadata.create_all)
 
-        result = await conn.execute(statement)
-
-# ALTER USER khalifah WITH PASSWORD 'Khalif01#2023';
-# \q
-# CREATE DATABASE bookly_db OWNER khalifah;
-        print(result.all)
 
          
