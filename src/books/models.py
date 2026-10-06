@@ -41,4 +41,11 @@ class Book(SQLModel, table=True):
     )
 
     def __repr__(self):
-        return f"Book(title={self.title}, author={self.author}, publisher={self.publisher}, published_date={self.published_date}, page_count={self.page_count}, language={self.language})"
+            return (
+                f"Book(title={self.title}, "
+                f"author={self.author}, "
+                f"publisher={self.publisher}, "
+                f"published_date={self.published_date}, "
+                f"page_count={self.page_count}, "
+                f"language={self.language})"
+            )
