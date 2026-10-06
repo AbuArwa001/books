@@ -6,7 +6,6 @@ from .utils import decode_access_token
 
 
 class AccessTokenBearer(HTTPBearer):
-
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
@@ -44,10 +43,8 @@ class AccessTokenBearer(HTTPBearer):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Invalid or missing access token",
             )
-    async def token_valid(
-            self,
-            token: str
-    )-> bool:
+
+    async def token_valid(self, token: str) -> bool:
         try:
             payload = decode_access_token(token)
             if payload is None:

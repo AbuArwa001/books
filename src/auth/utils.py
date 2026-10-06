@@ -52,9 +52,7 @@ def decode_access_token(token: str) -> dict:
     try:
         print("Decoding token:", token)
         payload = jwt.decode(
-            jwt=token,
-            key=Config.JWT_SECRET_KEY,
-            algorithms=[Config.JWT_ALGORITHM]
+            jwt=token, key=Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM]
         )
         print("Decoded payload:", payload)
         return payload
