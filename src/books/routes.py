@@ -23,8 +23,8 @@ async def create_a_book(book_data: BookCreateModel, session: AsyncSession = Depe
     new_book = await book_service.create_book(book_data)
     return new_book
 
-@book_router.get('/{book_id}')
-async def get_book(book_id: str, session: AsyncSession = Depends(get_session))-> dict:
+@book_router.get('/{book_id}', response_model=Book)
+async def get_book(book_id: str, session: AsyncSession = Depends(get_session))-> Book:
     
     book_service = BookService(session)
     book = await book_service.get_book(book_id)
@@ -35,8 +35,9 @@ async def get_book(book_id: str, session: AsyncSession = Depends(get_session))->
          detail="Book Not Found"
     )
 
-@book_router.patch('/{book_id}')
-async def update_book(book_id: str, book_update_data: BookUpdateModel, session: AsyncSession = Depends(get_session))-> dict:
+
+@book_router.patch('/{book_id}', response_model=Book)
+async def update_book(book_id: str, book_update_data: BookUpdateModel, session: AsyncSession = Depends(get_session))-> Book:
     book_service = BookService(session)
     book = await book_service.update_book(book_id, book_update_data)
     if book:

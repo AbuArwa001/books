@@ -20,12 +20,12 @@ class BookService:
         result = await self.db_session.exec(statement)
         book = result.first()
         if not book:
-            raise ValueError("Book not found")
+            return None
         return book
     async def update_book(self, book_id:str, book_data:BookUpdateModel):
         book = await self.get_book(book_id)
         if not book:
-            raise ValueError("Book not found")
+            return None
         book_data_dict = book_data.model_dump(exclude_unset=True)
         for key, value in book_data_dict.items():
             setattr(book, key, value)
@@ -35,7 +35,7 @@ class BookService:
     async def delete_book(self, book_id:str):
         book = await self.get_book(book_id)
         if not book:
-            raise ValueError("Book not found")
+            return None
         await self.db_session.delete(book)
         await self.db_session.commit()
 
