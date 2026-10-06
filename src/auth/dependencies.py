@@ -15,43 +15,33 @@ class AccessTokenBearer(HTTPBearer):
             HTTPBearer()
         ),
     ):
-        if credentials:
-            token = credentials.credentials
-            token_data = decode_access_token(token)
-            if not await self.token_valid(token):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid or expired access token",
-                )
-            if token_data is None:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid or expired access token",
-                )
-            if token_data.get("refresh", False):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Refresh token cannot be used as access token",
-                )
-            print("Token data:", token_data)
-            if not token_data.get("refresh", False):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid or expired access token",
-                )
-
-            return token_data
-        else:
+        if not credentials:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
+                status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or missing access token",
             )
+
+        token = credentials.credentials
+        token_data = decode_access_token(token)
+
+        if not token_data:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid or expired access token",
+            )
+
+        # Reject refresh tokens when calling protected endpoints
+        if token_data.get("refresh", False):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Refresh token cannot be used as access token",
+            )
+
+        return token_data
 
     async def token_valid(self, token: str) -> bool:
         try:
             payload = decode_access_token(token)
-            if payload is None:
-                return False
-            return True
+            return payload is not None
         except Exception:
             return False
