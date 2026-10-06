@@ -4,6 +4,7 @@ from .schemas import UserCreate, UserRegisterResponse, UserResponse
 from .service import UserService
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.db.main import get_session
+from .utils import create_access_token, decode_access_token
 
 auth_router = APIRouter()
 
@@ -26,9 +27,9 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_se
     new_user = await user_service.create_user(user_data)
     return {"message": "User registered successfully", "user": new_user}
 
-@auth_router.get("/login")
+@auth_router.post("/login")
 async def login():
-    return {"message": "Login endpoint"}
+   pass
 
 @auth_router.get("/logout")
 async def logout():
