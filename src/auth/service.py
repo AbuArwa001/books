@@ -20,9 +20,6 @@ class UserService:
         return True if user else False
 
     async def create_user(self, user_data: UserCreate) -> User:
-        # user_exists = await self.user_exists(user_data.email)
-        # if user_exists:
-        #     return None  # User already exists
         user_data_dict = user_data.model_dump(exclude={"password"})
         new_user = User(
             **user_data_dict,
