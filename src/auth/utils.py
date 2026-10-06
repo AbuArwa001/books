@@ -1,10 +1,12 @@
-from datetime import timedelta, datetime
-import jwt
-from src.config import Config
+import logging
 import uuid
+from datetime import datetime, timedelta
+
+import jwt
 from pwdlib import PasswordHash
 from pwdlib.hashers.bcrypt import BcryptHasher
-import logging
+
+from src.config import Config
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 3600
 # Initialize pwdlib with BcryptHasher
@@ -48,9 +50,13 @@ def decode_access_token(token: str) -> dict:
     Decode a JWT access token and return the payload.
     """
     try:
+        print("Decoding token:", token)
         payload = jwt.decode(
-            jwt=token, key=Config.JWT_SECRET_KEY, algorithms=[Config.JWT_ALGORITHM]
+            jwt=token,
+            key=Config.JWT_SECRET_KEY,
+            algorithms=[Config.JWT_ALGORITHM]
         )
+        print("Decoded payload:", payload)
         return payload
     except jwt.ExpiredSignatureError:
         logging.error("Token has expired")

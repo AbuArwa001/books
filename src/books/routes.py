@@ -1,15 +1,16 @@
-from uuid import uuid4
 
-from fastapi import APIRouter, status, Depends
+from typing import List
+
+from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
-from src.books.schemas import Book, BookCreateModel, BookUpdateModel
 
 # from src.books.book_data import books
 from sqlmodel.ext.asyncio.session import AsyncSession
-from typing import List
+
+from src.auth.dependencies import AccessTokenBearer
+from src.books.schemas import Book, BookCreateModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
-from src.auth.dependencies import AccessTokenBearer
 
 book_router = APIRouter()
 access_token_bearer = AccessTokenBearer()
@@ -20,6 +21,7 @@ async def get_all_books(
     session: AsyncSession = Depends(get_session),
     user_details=Depends(access_token_bearer),
 ):
+    print("User details from access token:", user_details)
     book_service = BookService(session)
     return await book_service.get_all_books()
 

@@ -1,0 +1,15 @@
+[tool.ruff]
+# Set the maximum line length (e.g., 88 is default Black style, 100 or 120 are common alternatives)
+line-length = 88
+
+# Target Python version
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable Pyflakes (F), pycodestyle (E, W), and isort (I)
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.format]
+# Enable automatic code formatting adhering to line-length
+quote-style = "double"
+indent-style = "space"

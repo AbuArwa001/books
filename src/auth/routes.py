@@ -1,13 +1,16 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
-from .schemas import UserCreate, UserRegisterResponse, UserResponse, UserLoginModel
-from .service import UserService
-from sqlmodel.ext.asyncio.session import AsyncSession
-from src.db.main import get_session
-from .utils import create_access_token, decode_access_token, verify_password
 from fastapi.responses import JSONResponse
-from datetime import timedelta
+from sqlmodel.ext.asyncio.session import AsyncSession
+
+from src.db.main import get_session
+
+from .schemas import UserCreate, UserLoginModel, UserRegisterResponse
+from .service import UserService
+from .utils import create_access_token, verify_password
 
 auth_router = APIRouter()
 REFRESH_TOKEN_EXPIRE_DAYS = 2
