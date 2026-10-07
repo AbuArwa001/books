@@ -21,6 +21,11 @@ class TokenBearer(HTTPBearer):
 
         token = credentials.credentials
         token_data = decode_access_token(token)
+        if not self.validate_token(token):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid or expired token",
+            )
 
         if not token_data:
             raise HTTPException(
@@ -38,6 +43,15 @@ class TokenBearer(HTTPBearer):
             "Subclasses must implement verify_token method."
         )
 
+    def validate_token(self, token: dict) -> bool:
+        """
+        Validate the token data. This method can be overridden in subclasses
+        to implement custom validation logic.
+        """
+        token_data = decode_access_token(token)
+        if not token_data:
+            return False
+        return True
 
 class AccessTokenBearer(TokenBearer):
     def verify_token(self, token_data: dict) -> None:
