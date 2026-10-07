@@ -5,20 +5,18 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from .utils import decode_access_token
 
 
-class AccessTokenBearer(HTTPBearer):
+class TokenBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
     async def __call__(
         self,
-        credentials: HTTPAuthorizationCredentials = Depends(
-            HTTPBearer()
-        ),
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
     ):
         if not credentials:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid or missing access token",
+                detail="Invalid or missing token",
             )
 
         token = credentials.credentials
@@ -27,21 +25,33 @@ class AccessTokenBearer(HTTPBearer):
         if not token_data:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid or expired access token",
+                detail="Invalid or expired token",
             )
 
-        # Reject refresh tokens when calling protected endpoints
+        # Let verify_token check token type and raise proper HTTPExceptions
+        self.verify_token(token_data)
+
+        return token_data
+
+    def verify_token(self, token_data: dict) -> None:
+        raise NotImplementedError(
+            "Subclasses must implement verify_token method."
+        )
+
+
+class AccessTokenBearer(TokenBearer):
+    def verify_token(self, token_data: dict) -> None:
         if token_data.get("refresh", False):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Refresh token cannot be used as access token",
             )
 
-        return token_data
 
-    async def token_valid(self, token: str) -> bool:
-        try:
-            payload = decode_access_token(token)
-            return payload is not None
-        except Exception:
-            return False
+class RefreshTokenBearer(TokenBearer):
+    def verify_token(self, token_data: dict) -> None:
+        if not token_data.get("refresh", False):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access token cannot be used as refresh token",
+            )

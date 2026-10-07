@@ -1,10 +1,11 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from fastapi import APIRouter, Depends, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
+from src.auth.dependencies import RefreshTokenBearer
 
 from src.db.main import get_session
 
@@ -86,7 +87,29 @@ async def login(
         ),
     )
 
-
+@auth_router.get("/refresh")
+async def get_new_access_token(
+    token_data: dict = Depends(RefreshTokenBearer()),
+):
+    expiry_timestamp = token_data.get("exp")
+    if datetime.fromtimestamp(expiry_timestamp) < datetime.now():
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token has expired",
+        )
+    access_token = create_access_token(
+        data={"email": token_data["user"]}
+    )
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=jsonable_encoder(
+            {
+                "message": "New access token generated successfully",
+                "access_token": access_token,
+                "token_type": "bearer",
+            }
+        ),
+    )
 @auth_router.post("/logout")
 async def logout():
     return {"message": "Logout endpoint"}
