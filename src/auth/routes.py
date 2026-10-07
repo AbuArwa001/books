@@ -5,9 +5,10 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
-from src.auth.dependencies import RefreshTokenBearer
+from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer
 
 from src.db.main import get_session
+from src.db.redis import add_jti_to_blacklist
 
 from .schemas import UserCreate, UserLoginModel, UserRegisterResponse
 from .service import UserService
@@ -111,5 +112,15 @@ async def get_new_access_token(
         ),
     )
 @auth_router.post("/logout")
-async def logout():
-    return {"message": "Logout endpoint"}
+async def logout(token_data: dict = Depends(AccessTokenBearer())):
+    jti = token_data.get("jti")
+    if not jti:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid token data",
+        )
+    await add_jti_to_blacklist(jti)
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=jsonable_encoder({"message": "Logout successful"}),
+    )
