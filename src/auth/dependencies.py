@@ -2,8 +2,11 @@ from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from src.db.redis import token_in_blacklist
-
+from src.db.main import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
 from .utils import decode_access_token
+from .service import UserService
+
 
 
 class TokenBearer(HTTPBearer):
@@ -75,3 +78,24 @@ class RefreshTokenBearer(TokenBearer):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access token cannot be used as refresh token",
             )
+
+async def get_current_user(
+        token_data: dict = Depends(AccessTokenBearer()),
+        session: AsyncSession = Depends(get_session)
+        ) -> dict:
+    user_= token_data.get("user")
+    user_email = user_.get("email") if user_ else None
+    user_service = UserService(session)
+    user = await user_service.get_user_by_email(user_email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    if not user_email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token: missing subject",
+        )
+    
+    return user

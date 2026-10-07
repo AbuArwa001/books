@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
-from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer
+from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer, get_current_user
 
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blacklist
@@ -111,6 +111,15 @@ async def get_new_access_token(
             }
         ),
     )
+
+
+
+@auth_router.get("/me")
+async def get_current_user(
+    user: dict = Depends(get_current_user)
+):
+    return user
+
 @auth_router.post("/logout")
 async def logout(token_data: dict = Depends(AccessTokenBearer())):
     jti = token_data.get("jti")
