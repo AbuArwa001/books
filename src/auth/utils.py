@@ -37,8 +37,6 @@ def create_access_token(
     )
     payload["jti"] = str(uuid.uuid4())
     payload["refresh"] = refresh
-    # payload.update(data)
-    # payload["exp"] = datetime.utcnow() + expires_delta
 
     token = jwt.encode(
         payload=payload,
