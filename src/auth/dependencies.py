@@ -1,6 +1,9 @@
+from typing import List
+
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from src.auth.models import User
 from src.db.redis import token_in_blacklist
 from src.db.main import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -99,3 +102,28 @@ async def get_current_user(
         )
     
     return user
+
+class RoleChecker:
+    def __init__(self, allowed_roles: List[str]):
+        self.allowed_roles = allowed_roles
+
+    async def __call__(
+        self,
+        current_user: User = Depends(get_current_user)
+    ):
+        if current_user.role not in self.allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"User does not have the required role: {self.allowed_roles}",
+            )
+        if not current_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        if current_user.role not in self.allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"User does not have the required role: {self.allowed_roles}",
+            )
+        return True

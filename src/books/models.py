@@ -2,7 +2,7 @@
 from datetime import date, datetime, timezone
 from uuid import UUID as uuid
 from uuid import uuid4
-
+from typing import Optional
 import sqlalchemy.dialects.postgresql as pg
 from sqlmodel import Column, Field, SQLModel
 
@@ -24,6 +24,14 @@ class Book(SQLModel, table=True):
     published_date: date
     page_count: int
     language: str
+    user_id: Optional[uuid] = Field(
+        default=None,
+        foreign_key="users.uid",
+        # sa_column=Column(
+        #     pg.UUID,
+        #     nullable=True,
+        # ),
+    )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(

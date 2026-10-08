@@ -10,36 +10,62 @@ from src.auth.dependencies import AccessTokenBearer
 from src.books.schemas import Book, BookCreateModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
+from src.auth.dependencies import get_current_user, RoleChecker
 
 book_router = APIRouter()
 access_token_bearer = AccessTokenBearer()
+role_checker = RoleChecker(allowed_roles=["admin", "user"])
 
 
-@book_router.get("/", response_model=List[Book])
+@book_router.get("/",
+                 response_model=List[Book],
+                 dependencies=[Depends(access_token_bearer), Depends(role_checker)],
+                 )
 async def get_all_books(
     session: AsyncSession = Depends(get_session),
+    token_data: dict = Depends(access_token_bearer),
     user_details=Depends(access_token_bearer),
+    \
 ):
     print("User details from access token:", user_details)
     book_service = BookService(session)
     return await book_service.get_all_books()
 
+@book_router.get("/user/{user_id}",
+                 response_model=List[Book],
+                 dependencies=[Depends(access_token_bearer), Depends(role_checker)],
+                 )
+async def get_user_books_submissions(
+    user_id: str,
+    session: AsyncSession = Depends(get_session),
+    # token_data: dict = Depends(access_token_bearer),
+    # user_details=Depends(access_token_bearer),
+):
+    book_service = BookService(session)
+
+    return await book_service.get_user_books(user_id)
+
 
 @book_router.post(
-    "/", status_code=status.HTTP_201_CREATED, response_model=Book
+    "/", status_code=status.HTTP_201_CREATED, response_model=Book,
+    dependencies=[Depends(access_token_bearer), Depends(role_checker)],
 )
 async def create_a_book(
     book_data: BookCreateModel,
     session: AsyncSession = Depends(get_session),
+    token_data: dict = Depends(access_token_bearer),
 ) -> Book:
+    user_id = token_data.get("user", {}).get("user_id")
     book_service = BookService(session)
-    new_book = await book_service.create_book(book_data)
+    new_book = await book_service.create_book(book_data, user_id)
     return new_book
 
 
-@book_router.get("/{book_id}", response_model=Book)
+@book_router.get("/{book_id}", response_model=Book,
+                  dependencies=[Depends(access_token_bearer), Depends(role_checker)],
+                 )
 async def get_book(
-    book_id: str, session: AsyncSession = Depends(get_session)
+    book_id: str, session: AsyncSession = Depends(get_session),
 ) -> Book:
 
     book_service = BookService(session)
@@ -51,7 +77,10 @@ async def get_book(
     )
 
 
-@book_router.patch("/{book_id}", response_model=Book)
+@book_router.patch("/{book_id}",
+                   response_model=Book,
+                   dependencies=[Depends(access_token_bearer), Depends(role_checker)],
+                   )
 async def update_book(
     book_id: str,
     book_update_data: BookUpdateModel,
@@ -67,7 +96,8 @@ async def update_book(
 
 
 @book_router.delete(
-    "/{book_id}", status_code=status.HTTP_204_NO_CONTENT
+    "/{book_id}", status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(access_token_bearer), Depends(role_checker)],
 )
 async def delete_book(
     book_id: str, session: AsyncSession = Depends(get_session)

@@ -10,9 +10,10 @@ class BookService:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
 
-    async def create_book(self, book_data: BookCreateModel):
+    async def create_book(self, book_data: BookCreateModel, user_id: str):
         book_data_dict = book_data.model_dump()
         new_book = Book(**book_data_dict)
+        new_book.user_id = user_id
         self.db_session.add(new_book)
         await self.db_session.commit()
         await self.db_session.refresh(new_book)
@@ -48,6 +49,11 @@ class BookService:
 
     async def get_all_books(self):
         statement = select(Book).order_by(desc(Book.created_at))
+        result = await self.db_session.exec(statement)
+        books = result.all()
+        return books
+    async def get_user_books(self, user_id: str):
+        statement = select(Book).where(Book.user_id == user_id).order_by(desc(Book.created_at))
         result = await self.db_session.exec(statement)
         books = result.all()
         return books

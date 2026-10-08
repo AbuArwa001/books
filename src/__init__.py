@@ -21,7 +21,6 @@ app = FastAPI(
     title="Book API",
     description="A Book Review Web Service",
     version=version,
-    lifespan=lifespan,
 )
 app.include_router(
     book_router, prefix=f"/api/{version}/books", tags=["Books"]

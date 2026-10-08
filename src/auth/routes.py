@@ -59,7 +59,7 @@ async def login(
             detail="Invalid email or password",
         )
     access_token = create_access_token(
-        data={"email": email, "user_id": str(user.uid)}
+        data={"email": email, "user_id": str(user.uid), "role": user.role}
     )
     refresh_token = create_access_token(
         data={"email": email, "user_id": str(user.uid)},
