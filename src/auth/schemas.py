@@ -1,6 +1,9 @@
 from datetime import datetime
+from typing import List
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+from src.books.schemas import BookMinResponse
 
 
 class UserCreate(BaseModel):
@@ -17,6 +20,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     is_verified: bool
+    books: List = [BookMinResponse]
     created_at: datetime
     updated_at: datetime
 

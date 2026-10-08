@@ -34,7 +34,9 @@ class Book(SQLModel, table=True):
         #     nullable=True,
         # ),
     )
-    user: Optional["User"] = Relationship(back_populates="books")
+    user: Optional["User"] = Relationship(
+          back_populates="books",
+          sa_relationship_kwargs={"lazy": "selectin"},)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(
@@ -60,3 +62,5 @@ class Book(SQLModel, table=True):
                 f"page_count={self.page_count}, "
                 f"language={self.language})"
             )
+
+    

@@ -45,7 +45,10 @@ class User(SQLModel, table=True):
         )
     )
     is_verified: bool = Field(default=False)
-    books :List["Book"] = Relationship(back_populates="user")
+    books :List["Book"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"lazy": "selectin"},
+        )
     password_hash: str = Field(
         exclude=True,
         sa_column=Column(

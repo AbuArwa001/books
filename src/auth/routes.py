@@ -7,10 +7,11 @@ from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer, get_current_user
 
+from src.auth.models import User
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blacklist
 
-from .schemas import UserCreate, UserLoginModel, UserRegisterResponse
+from .schemas import UserCreate, UserLoginModel, UserRegisterResponse, UserResponse
 from .service import UserService
 from .utils import create_access_token, verify_password
 
@@ -114,9 +115,11 @@ async def get_new_access_token(
 
 
 
-@auth_router.get("/me")
+
+
+@auth_router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_current_user(
-    user: dict = Depends(get_current_user)
+    user: User = Depends(get_current_user)
 ):
     return user
 
