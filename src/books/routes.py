@@ -25,7 +25,6 @@ async def get_all_books(
     session: AsyncSession = Depends(get_session),
     token_data: dict = Depends(access_token_bearer),
     user_details=Depends(access_token_bearer),
-    \
 ):
     print("User details from access token:", user_details)
     book_service = BookService(session)

@@ -1,7 +1,10 @@
+from typing import Optional
 import uuid
 from datetime import date, datetime
 
 from pydantic import BaseModel
+
+from src.auth.models import User
 
 
 class Book(BaseModel):
@@ -12,8 +15,8 @@ class Book(BaseModel):
     published_date: date
     page_count: int
     language: str
-    user_id: uuid.UUID
-    # user: dict
+    user_id: Optional[uuid.UUID] = None
+    user: Optional["User"] = None
     created_at: datetime
     updated_at: datetime
 
