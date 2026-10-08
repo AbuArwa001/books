@@ -1,9 +1,12 @@
 from datetime import datetime
+from typing import List
 from uuid import UUID as uuid
 from uuid import uuid4
 
 import sqlalchemy.dialects.postgresql as pg
-from sqlmodel import Column, Field, SQLModel
+from sqlmodel import Column, Field, SQLModel, Relationship
+
+from src.books.models import Book
 
 """
 class User:
@@ -42,6 +45,7 @@ class User(SQLModel, table=True):
         )
     )
     is_verified: bool = Field(default=False)
+    books :List["Book"] = Relationship(back_populates="user")
     password_hash: str = Field(
         exclude=True,
         sa_column=Column(

@@ -12,6 +12,8 @@ class Book(BaseModel):
     published_date: date
     page_count: int
     language: str
+    user_id: uuid.UUID
+    # user: dict
     created_at: datetime
     updated_at: datetime
 

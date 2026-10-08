@@ -4,7 +4,9 @@ from uuid import UUID as uuid
 from uuid import uuid4
 from typing import Optional
 import sqlalchemy.dialects.postgresql as pg
-from sqlmodel import Column, Field, SQLModel
+from sqlmodel import Column, Field, SQLModel, Relationship
+
+# from src.auth.models import User
 
 
 class Book(SQLModel, table=True):
@@ -32,6 +34,7 @@ class Book(SQLModel, table=True):
         #     nullable=True,
         # ),
     )
+    user: Optional["User"] = Relationship(back_populates="books")
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(
