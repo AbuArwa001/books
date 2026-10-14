@@ -5,6 +5,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, ConfigDict
 
 from src.auth.models import User
+from src.review.models import Review
 
 
 class Book(BaseModel):
@@ -17,6 +18,7 @@ class Book(BaseModel):
     language: str
     user_id: Optional[uuid.UUID] = None
     user: Optional["User"] = None
+    reviews: Optional[list["Review"]] = None
     created_at: datetime
     updated_at: datetime
 
