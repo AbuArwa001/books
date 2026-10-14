@@ -1,8 +1,9 @@
+from fastapi import HTTPException
+
 from src.db.main import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.review.models import Review
 from src.review.schema import ReviewModel
-
 
 
 class ReviewService:
@@ -15,6 +16,9 @@ class ReviewService:
         self.session.commit()
         self.session.refresh(review)
         return review
+    def get_all_reviews(self):
+        reviews = self.session.query(Review).all()
+        return reviews
 
     def get_review(self, review_id: int):
         review = self.session.query(Review).filter(Review.id == review_id).first()
