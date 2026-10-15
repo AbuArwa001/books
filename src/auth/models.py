@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from uuid import UUID as uuid
 from uuid import uuid4
 
@@ -45,7 +45,7 @@ class User(SQLModel, table=True):
         )
     )
     is_verified: bool = Field(default=False)
-    books :List["Book"] = Relationship(
+    books : list["Book"] = Relationship(
         back_populates="user",
         sa_relationship_kwargs={"lazy": "selectin"},
         )
