@@ -5,6 +5,7 @@ from uuid import uuid4
 from typing import Optional
 import sqlalchemy.dialects.postgresql as pg
 from sqlmodel import Column, Field, SQLModel, Relationship
+from src.tags.models import BookTagLink
 
 # from src.review.models import Review
 # from src.auth.models import User
@@ -46,6 +47,7 @@ class Book(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "selectin"},)
     tags: Optional["Tag"] = Relationship(
         back_populates="books",
+        link_model=BookTagLink,
         sa_relationship_kwargs={"lazy": "selectin"},)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
