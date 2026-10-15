@@ -1,8 +1,8 @@
-from pydantic import BaseModel, Field
+import uuid
+from pydantic import BaseModel
 
 class ReviewModel(BaseModel):
-    id: int 
-    content: str 
-    rating: int 
-    books_id: int
+    id: uuid.UUID
+    content: str
+    rating: int
     

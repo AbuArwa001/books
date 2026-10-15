@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from src.auth.routes import auth_router
-from src.books.routes import book_router
-from src.tags.routes import tag_router
-from src.review.routes import review_router
+from src.books.routes import  book_router
+from src.tags.routes import router as tag_router
+from src.review.routes import router as  review_router
 from src.db.main import init_db
 
 

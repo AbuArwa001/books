@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-from src.tags.schemas import Tags, TagsSchema, TagsSchema
+from src.tags.schemas import TagsSchema
+from src.tags.models import Tag
 
 
 class TagsService(BaseModel):
@@ -9,16 +10,16 @@ class TagsService(BaseModel):
          self.session = session
 
     def create_tag(self, tag_data: TagsSchema):
-        tag = Tags(**tag_data.model_dump())
+        tag = Tag(**tag_data.model_dump())
         self.session.add(tag)
         self.session.commit()
         self.session.refresh(tag)
         return tag
     def get_all_tags(self):
-        tags = self.session.query(Tags).all()
+        tags = self.session.query(Tag).all()
         return tags
     def get_tag(self, tag_id: int):
-        tag = self.session.query(Tags).filter(Tags.id == tag_id).first()
+        tag = self.session.query(Tag).filter(Tag.id == tag_id).first()
         if not tag:
             raise HTTPException(status_code=404, detail="Tag not found")
         return tag
