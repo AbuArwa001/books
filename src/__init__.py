@@ -4,6 +4,8 @@ from fastapi import FastAPI
 
 from src.auth.routes import auth_router
 from src.books.routes import book_router
+from src.tags.routes import tag_router
+from src.review.routes import review_router
 from src.db.main import init_db
 
 
@@ -27,4 +29,10 @@ app.include_router(
 )
 app.include_router(
     auth_router, prefix=f"/api/{version}/auth", tags=["Auth"]
+)
+app.include_router(
+    tag_router, prefix=f"/api/{version}/tags", tags=["Tags"]
+)
+app.include_router(
+    review_router, prefix=f"/api/{version}/reviews", tags=["Reviews"]
 )
