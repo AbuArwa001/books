@@ -1,8 +1,10 @@
 from sqlmodel import Column, Field, SQLModel, Relationship
-from typing import List, Optional
-from src.books.models import Book
+from typing import Optional, TYPE_CHECKING
 from uuid import UUID as uuid
 from uuid import uuid4
+
+if TYPE_CHECKING:
+    from src.books.models import Book
 
 
 class BookTagLink(SQLModel, table=True):
@@ -13,11 +15,13 @@ class BookTagLink(SQLModel, table=True):
 
 class Tag(SQLModel, table=True):
     __tablename__ = "tags"
-    id: uuid = Field(default=uuid4(), primary_key=True)
+    
+    id: uuid = Field(default_factory=uuid4, primary_key=True)
     name: str = Field(unique=True, nullable=False)
-    books_id: Optional[List[uuid]] = Field(default=None, foreign_key="books.uid")
+    
+    
     books: list["Book"] = Relationship(
         back_populates="tags",
-        link_model="BookTagLink",
+        link_model=BookTagLink,
         sa_relationship_kwargs={"lazy": "selectin"},
     )
